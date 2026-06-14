@@ -1,59 +1,70 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# MJP Cargo — Fleet Selection Decision Support System (AHP-TOPSIS)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A web-based Decision Support System (DSS) that helps **PT Manado Jaya Perkasa (MJP Cargo)**, a logistics company in North Sulawesi, Indonesia, select the optimal Light Duty Truck for fleet ownership using an integrated **AHP-TOPSIS** methodology.
 
-## About Laravel
+Built with Laravel + MySQL as a Multi-Criteria Decision Making (MCDM) final project at Universitas Kristen Petra.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Background
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+MJP Cargo serves Indomaret and Alfamidi distribution routes across North Sulawesi, Gorontalo, and North Maluku — terrain dominated by narrow, hilly roads. The company currently leases all 12 of its trucks and is evaluating a transition to fleet ownership. Choosing the right truck involves trade-offs between purchase price, fuel efficiency, payload capacity, and spare parts availability — criteria that often conflict with each other.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+This system applies a structured, two-stage MCDM approach:
 
-## Learning Laravel
+- **AHP (Analytic Hierarchy Process)** — derives objective criteria weights from the owner's expert judgment via pairwise comparison, validated through a Consistency Ratio (CR) check.
+- **TOPSIS (Technique for Order Preference by Similarity to Ideal Solution)** — ranks truck alternatives based on their distance to the ideal best and worst solutions, using the weights from AHP.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## Criteria
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+| Code | Criterion | Type | Unit |
+|------|-----------|------|------|
+| C1 | Purchase Price | Cost | Million IDR |
+| C2 | Fuel Efficiency | Benefit | km/L |
+| C3 | Payload Capacity | Benefit | Ton |
+| C4 | Spare Parts Availability | Benefit | Score (1–10) |
 
-## Laravel Sponsors
+**AHP-derived weights** (CR = 0.0326, consistent): Payload Capacity (56.6%) > Fuel Efficiency (27.4%) > Spare Parts Availability (11.3%) > Purchase Price (4.6%) — reflecting the owner's priority on operational performance over upfront cost.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Result
 
-### Premium Partners
+Out of 10 evaluated Light Duty Truck alternatives, **Isuzu Elf NMR 71** ranked first (V = 0.8931), driven by its combination of best-in-class fuel efficiency (12 km/L) and highest payload capacity (8.25 ton) — the two highest-weighted criteria.
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+| Rank | Alternative | Score (V) |
+|------|-------------|-----------|
+| 1 | Isuzu Elf NMR 71 | 0.8931 |
+| 2 | Isuzu Elf NMR 71 L (Long Chassis) | 0.7979 |
+| 3 | Hino Dutro 136 HD | 0.6848 |
 
-## Contributing
+Full calculation breakdown, decision matrix, and analysis available in [`docs/`](./docs).
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Features
 
-## Code of Conduct
+- Dashboard with current recommendation and quick stats
+- Alternative (truck) management — add, edit, delete
+- TOPSIS results page showing decision matrix, normalized matrix, weighted matrix, ideal solutions, and final ranking
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Tech Stack
 
-## Security Vulnerabilities
+- Laravel (PHP)
+- MySQL (via Docker)
+- Blade templates
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Getting Started
 
-## License
+```bash
+git clone https://github.com/leonardjust14/project-mcdm-mjp-cargo.git
+cd project-mcdm-mjp-cargo
+docker-compose up -d
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate --seed
+php artisan serve
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Visit `http://localhost:8000`.
+
+## Project Team
+
+Final project for Multiple Criteria Decision Making (MCDM), Information Systems Business, Universitas Kristen Petra (2026).
+
+- Leonard Caesar Justin 
